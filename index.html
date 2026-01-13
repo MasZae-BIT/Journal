@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jurnal Search Engine (Granite Style)</title>
+    <title>Jurnal Search Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- TEMA YANG SAMA DENGAN IG DOWNLOADER --- */
         body { background-color: #0f1016; font-family: 'Segoe UI', sans-serif; }
-        
-        /* Efek Kaca (Glassmorphism) */
         .glass {
             background: rgba(30, 31, 40, 0.75);
             backdrop-filter: blur(16px);
@@ -17,7 +14,6 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Scrollbar kustom biar rapi */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f1016; }
         ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
@@ -30,9 +26,19 @@
         
         <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-blue-600 rounded-full mix-blend-overlay filter blur-[60px] opacity-20 pointer-events-none"></div>
 
-        <div class="text-center mb-6 relative z-10 flex-none">
+        <div class="text-center mb-4 relative z-10 flex-none">
             <h1 class="text-3xl font-extrabold mb-2 tracking-tight">Jurnal Search Engine</h1>
-            <p class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Powered by IBM Granite • Multi-Source</p>
+            <p class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Powered by ZAE • Multi-Source</p>
+        </div>
+
+        <div class="flex justify-center gap-3 mb-6 text-xs font-mono relative z-10 flex-none">
+            <span class="bg-gray-900/50 border border-gray-700 px-3 py-1 rounded-md text-green-400 flex items-center gap-2">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                Server: Online
+            </span>
+            <span class="bg-gray-900/50 border border-gray-700 px-3 py-1 rounded-md text-blue-400">
+                v1.0 ZaeAI
+            </span>
         </div>
 
         <div class="flex flex-col gap-3 mb-6 relative z-10 flex-none">
@@ -133,11 +139,8 @@
 
         async function fetchPubMed(query) {
             try {
-                // Catatan: Endpoint pubmed ini sering memerlukan handling ID list terpisah, 
-                // tapi saya biarkan sesuai logika aslimu.
                 const res = await fetch(`https://api.ncbi.nlm.nih.gov/lit/ctxp/v1/pubmed/?format=csl&id=${encodeURIComponent(query)}`);
                 const data = await res.json();
-                // Pubmed biasanya return ID error kalau query bukan ID, jadi kita bungkus try catch
                 return [{
                     title: data.title || "Tanpa Judul",
                     authors: data.author ? data.author.map(a => a.family).join(', ') : "Tidak diketahui",
@@ -159,7 +162,6 @@
                 return;
             }
 
-            // Tampilan Loading
             resultsContainer.innerHTML = `
                 <div class="flex flex-col items-center justify-center py-10 text-gray-400 animate-pulse">
                     <p class="text-lg font-semibold">Sedang mencari referensi...</p>
@@ -169,7 +171,6 @@
 
             let results = [];
             
-            // Promise.all agar request jalan barengan (lebih cepat)
             const promises = [];
             if (source === "semantic" || source === "both") promises.push(fetchSemanticScholar(query));
             if (source === "crossref" || source === "both") promises.push(fetchCrossRef(query));
@@ -189,7 +190,6 @@
                 return;
             }
 
-            // Render Hasil dengan Gaya Card Estetik
             resultsContainer.innerHTML = results.map((r, i) => `
                 <div class="bg-gray-800/40 border border-gray-700/50 p-5 rounded-xl hover:bg-gray-800/60 transition group relative">
                     
@@ -229,15 +229,12 @@
         function summarizeAI(index, text) {
             const aiBox = document.getElementById(`ai-${index}`);
             
-            // Toggle (Buka/Tutup)
             if (aiBox.classList.contains('hidden')) {
                 aiBox.classList.remove('hidden');
                 aiBox.innerHTML = "🤖 ZaeAI sedang menganalisis...";
                 
-                // Simulasi AI Loading
                 setTimeout(() => {
-                    aiBox.classList.remove('animate-pulse'); // Stop kedip
-                    // Ambil 30 kata pertama sebagai simulasi ringkasan
+                    aiBox.classList.remove('animate-pulse'); 
                     const summary = text.split(' ').slice(0, 30).join(' ');
                     aiBox.innerHTML = `
                         <div class="flex items-start gap-2">
